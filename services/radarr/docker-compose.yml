@@ -1,0 +1,29 @@
+version: '3'
+services:
+  radarr:
+    image: linuxserver/radarr
+    restart: unless-stopped
+    volumes:
+      - "/mnt/vols/radarr/config:/config"
+      - "nfs_downloads:/downloads"
+      - "nfs_movies:/movies"
+    ports:
+      - "7878:7878"
+    environment:
+      PUID: "${UID}"
+      PGID: "${GID}"
+      TZ: "Europe/London"
+      UMASK_SET: "022"
+volumes:
+  nfs_downloads:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: "addr=10.0.2.10,soft,rw"
+      device: ":/export/storage/tmp/downloads"
+  nfs_movies:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: "addr=10.0.2.10,soft,rw"
+      device: ":/export/storage/media/movies"
