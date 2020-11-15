@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  plex:
+    image: ghcr.io/linuxserver/plex
+    restart: unless-stopped
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - VERSION=docker
+      - UMASK_SET=022 #optional
+      - PLEX_CLAIM= #optional
+    volumes:
+      - /mnt/vols/plex/config:/config
+      - nfs_movies:/movies
+      - nfs_tv:/tv
+
+volumes:
+  nfs_movies:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: "addr=10.0.2.10,soft,rw"
+      device: ":/export/storage/media/movies"
+  nfs_tv:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: "addr=10.0.2.10,soft,rw"
+      device: ":/export/storage/media/tv"
+
